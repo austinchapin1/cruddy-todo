@@ -29,10 +29,21 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  fs.readdir('./test/testData/', (err, files) => {
+    if (err) {
+      console.log(err);
+    } else {
+      var ids = files.map(file => {
+        var id = file.slice(0, 5);
+        return { id: id, text: id };
+      });
+      callback(null, ids);
+    }
   });
-  callback(null, data);
+  // var data = _.map(items, (text, id) => {
+  //   return { id, text };
+  // });
+  // callback(null, data);
 };
 
 exports.readOne = (id, callback) => {
