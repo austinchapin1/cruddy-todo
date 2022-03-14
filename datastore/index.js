@@ -12,8 +12,7 @@ exports.create = (text, callback) => {
     if (err) {
       console.log(err);
     } else {
-      var file = `./test/testData/${id}.txt`;
-      fs.writeFile(file, text, (err) => {
+      fs.writeFile(`${exports.dataDir}/${id}.txt`, text, (err) => {
         if (err) {
           console.log(err);
         } else {
@@ -29,7 +28,7 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  fs.readdir('./test/testData/', (err, files) => {
+  fs.readdir(`${exports.dataDir}`, (err, files) => {
     if (err) {
       console.log(err);
     } else {
@@ -47,7 +46,7 @@ exports.readAll = (callback) => {
 };
 
 exports.readOne = (id, callback) => {
-  fs.readFile(`./test/testData/${id}.txt`, 'utf8', (err, text) => {
+  fs.readFile(`${exports.dataDir}/${id}.txt`, 'utf8', (err, text) => {
     if (err) {
       callback(new Error(`No item with id: ${id}`));
     } else {
@@ -63,13 +62,26 @@ exports.readOne = (id, callback) => {
 };
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
+  if (!fs.existsSync(`${exports.dataDir}/${id}.txt`)) {
     callback(new Error(`No item with id: ${id}`));
   } else {
-    items[id] = text;
-    callback(null, { id, text });
+    fs.writeFile(`./test/testData/${id}.txt`, text, (err, todo) => {
+      if (err) {
+        callback(new Error(`No item with id: ${id}`));
+      } else {
+        callback(null, id);
+      }
+    });
   }
+
+
+  // var item = items[id];
+  // if (!item) {
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   items[id] = text;
+  //   callback(null, { id, text });
+  // }
 };
 
 exports.delete = (id, callback) => {
@@ -86,6 +98,7 @@ exports.delete = (id, callback) => {
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
 
 exports.dataDir = path.join(__dirname, 'data');
+console.log(exports.dataDir);
 
 exports.initialize = () => {
   if (!fs.existsSync(exports.dataDir)) {
