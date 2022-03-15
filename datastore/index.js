@@ -65,7 +65,7 @@ exports.update = (id, text, callback) => {
   if (!fs.existsSync(`${exports.dataDir}/${id}.txt`)) {
     callback(new Error(`No item with id: ${id}`));
   } else {
-    fs.writeFile(`./test/testData/${id}.txt`, text, (err, todo) => {
+    fs.writeFile(`${exports.dataDir}/${id}.txt`, text, (err, todo) => {
       if (err) {
         callback(new Error(`No item with id: ${id}`));
       } else {
@@ -85,14 +85,25 @@ exports.update = (id, text, callback) => {
 };
 
 exports.delete = (id, callback) => {
-  var item = items[id];
-  delete items[id];
-  if (!item) {
-    // report an error if item not found
+  if (!fs.existsSync(`${exports.dataDir}/${id}.txt`)) {
     callback(new Error(`No item with id: ${id}`));
   } else {
-    callback();
+    fs.unlink(`${exports.dataDir}/${id}.txt`, (err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        callback();
+      }
+    });
   }
+  // var item = items[id];
+  // delete items[id];
+  // if (!item) {
+  //   // report an error if item not found
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback();
+  // }
 };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
